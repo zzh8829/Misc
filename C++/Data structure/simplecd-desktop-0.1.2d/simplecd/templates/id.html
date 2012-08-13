@@ -1,0 +1,173 @@
+$def with (r)
+
+$code:
+    rec = r[0]
+    fl = r[1]
+    id = r[2]
+    if r[3]:
+        lock = r[3][0]
+    else:
+        lock = None
+    name = 'topic'+id
+    stitle = rec[1][1:rec[1].find('(')-1]
+    if rec[0]>2147483647:
+        simplecd=True
+    else:
+        simplecd=False
+
+    def emsize(link):
+        if len(link.split('|'))<4:
+            return 'Unknown'
+        if len(link.split('|'))>=4 and link.split('|')[3].isdigit():
+            n = int(link.split('|')[3])
+        else:
+            n = 0
+        if n < 1024:
+            return '%d Bytes' % n
+        elif n < 1024*1024:
+            n2 = n/1.0/1024
+            return '%3.1f KB' % n2
+        elif n < 1024*1024*1024:
+            n2 = n/1.0/1024/1024
+            return '%3.1f MB' % n2
+        elif n < 1024*1024*1024*1024:
+            n2 = n/1.0/1024/1024/1024
+            return '%3.1f GB' % n2
+    def format(content):
+        return content.replace('\n','<br>')
+    def relatedlink(rl):
+        if rl == None:
+            rl = ''
+        links = [ x.split('`') for x in rl.split('\n') ]
+        rtn = '''<table cellspacing="1" cellpadding="0" border="0" width="800" align="center"><tr><td>
+        <b>%s</b></td></tr><tr><td>''' % '相关资源：'.decode('utf-8')
+        for link in links:
+            if len(link)==2:
+                rtn += '<a href="/id/%s">%s</a><br>\n'%(link[0],link[1])
+        rtn += '</td></tr></table>\n'
+        return rtn
+    def emlink(ed2k):
+        links = ed2k.split('`')
+        rtn = '''<table cellspacing="1" cellpadding="0" border="0" width="800" class="ed2kzone" align="center">
+        <tbody>
+        <tr class="ed2kheader">
+        <td align="center" colspan="4">'''+'下面是用户共享的文件列表，推荐使用'.decode('utf-8')+'''<a href="http://www.emule-project.net/home/perl/general.cgi?l=42&rm=download" target="_blank">eMule</a>  '''+'进行下载，您可以点击这些文件名进行下载'.decode('utf-8')+'''<br>Below are files shared by users, please use <a href="http://www.emule-project.net/" target="_blank">eMule</a> to download them</td>
+        </tr>'''
+
+        i = 0
+        while i+1 < len(links):
+            if links[i].startswith('ed2k') and 'ed2k://' in links[i+1]:
+                rtn += '''<tr class="ed2kitem">
+                <td width="20"><input type="checkbox" checked="checked" onclick="em_size(''+this.name+'');" value="%s" name="%s"/></td>
+                <td width="640"><a ed2k="%s" href="%s">%s</a></td>
+                <td width="100" name="%ssize">%s</td></tr>\n''' % (links[i],name,links[i],links[i],links[i+2],name,emsize(links[i]))
+                k = 1
+                for sub in getsubs(links[i+1]):
+                    sname = "%s" % name
+                    rtn += '''<tr class="ed2kitem">
+                    <td width="20"><input type="checkbox" checked="checked" onclick="em_size(''+this.name+'');" value="%s" name="%s"/></td>
+                    <td width="640">[%s]<a ed2k="%s" href="%s">%s</a></td>
+                    <td width="100" name="%ssize">%s</td></tr>\n''' % (sub[0],sname,'字幕'.decode('utf-8'),sub[0],sub[0],links[i+2].rsplit('.',1)[0]+'.'+sub[1].split('.')[-2]+'.'+sub[1].split('.')[-1],sname,emsize(sub[0]))
+                    k += 1
+                i += 3
+            else:
+                rtn += '''<tr class="ed2kitem">
+                <td width="20"><input type="checkbox" checked="checked" onclick="em_size(''+this.name+'');" value="%s" name="%s"/></td>
+                <td width="640"><a ed2k="%s" href="%s">%s</a></td>
+                <td width="100" name="%ssize">%s</td></tr>''' % (links[i],name,links[i],links[i],links[i+1],name,emsize(links[i]))
+                i += 2
+        rtn += '''<tr class="ed2kitem">
+        <td width="20"><input type="checkbox" checked="" onclick="checkAll('%s',this.checked)" class="forminput" id="checkall_%s"/></td>
+        <td colspan="1"><input type="button" onclick="download('%s',0,1)" class="filebutton" value="''' % (name,name,name)
+        rtn += '下载'.decode('utf-8')
+        rtn += '''"/> <input type="button" onclick="copy('%s')" class="filebutton" value="''' % name
+        rtn += '复制'.decode('utf-8')
+        rtn += '''"/><td width="70" id="size_%s"></td></tr></tbody></table>''' % name
+        return rtn
+
+<HTML>
+	<HEAD>
+		<title>SimpleCD:让分享变得简单&nbsp;$rec[1]&nbsp;下载|emule|download</title>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+		<META NAME="keywords" CONTENT="VeryCD,精简版,emule,电骡,下载">
+		<META NAME="description" content="SimpleCD电骡资源页面：$rec[1]；摘要：$rec[3]">
+		<LINK href="/static/main_02.css" type="text/css" rel="stylesheet">
+		<script language="javascript" type="text/javascript" src="/static/common.js"></script> 
+		<link rel="shorcut icon" href="/static/favicon.ico"/>
+	</HEAD>
+
+$if fl:
+	<h3>复制下列链接，在emule中选择新建任务即可</h3>
+	$:fl
+$else:
+	<BODY onload=init('$name');>
+	<div name="all"align=center width=800>
+		<table cellpadding=0 cellspacing=1 align=center width=800>
+			<tr><td>
+				<a href="http://www.simplecd.org/bbs/index.php">论坛</a>&nbsp;|&nbsp;
+				<a href="http://www.simplecd.org/feed">订阅更新</a>&nbsp;|&nbsp;
+				<a href="http://www.simplecd.org/bbs/forumdisplay.php?fid=3" >意见反馈</a>&nbsp;|&nbsp;
+			</td>
+		</table>
+		<table cellpadding=0 cellspacing=0 align=center width=800>
+			<tr><td width=218><a href=/><img src=/static/simplecd.png height=68></a>
+				<td valign=middle align=right>
+				&nbsp;
+	                <form id=search method=get action=/>
+						<INPUT type=text name=q size=30 value="">
+						<SELECT name=cat>
+							<option value="">分类</option>
+							$for catname in ['电影','剧集','音乐','游戏','动漫','综艺','软件','资料']:
+								<option value=$catname>$catname</option>
+						</SELECT>
+						<INPUT type=submit value="SimpleCD搜索">
+					</form>
+				</td></tr>
+		</table>
+		<table cellpadding=0 cellspacing=0 align=center width=800>
+			<tr><td class=bt><b>Topic ID:</b> $:rec[0]</td></tr>
+			<tr><td><font size="4"><b>$:rec[1]</b></font></td></tr>
+			$if lock:
+				<tr><td><b>发布者：</b><a href="/user/$lock.owner">$lock.owner</a></td></td>
+			<tr><td><b>状态：</b>$:rec[2]</td></td>
+			<tr><td><b>摘要：</b>$:rec[3]</td></tr>
+			<tr><td><b>发布时间：</b>$:rec[4]</td></tr>
+			<tr><td><b>更新时间：</b>$:rec[5]</td></tr>
+			<tr><td><b>类别：</b>$:rec[6],$:rec[7]</td></tr>
+			$if rec[6].encode('utf-8') in ['电影','剧集','综艺']:
+				<tr><td><b>字幕：</b><a href="http://shooter.cn/search/Sub:$stitle">去射手网搜索字幕</a></td></tr>
+		</table>
+		$:emlink(rec[8])
+		$:relatedlink(rec[10])
+		<div align=left height=0 id="popupcontent">This is a popup window!</div>
+		<div align=center width=800 style="margin-top:-50px">
+			<h2>资源介绍</h2>
+			<table align=center width=800 border=1>
+			<tr><td>$:format(rec[9])</td></tr>
+			</table>
+		</div>
+		<div id=comment align=center width=800>
+			<h2>用户评论</h2>
+			<div id="cmts" align=center width=800>
+				评论载入中...
+			</div>
+		</div>
+		<script type="text/javascript">
+			checkAll('$name',true);
+			showcmt('$rec[0]','1');
+			set_login_status('login_status');
+			set_user_name('username_id');
+			  var _gaq = _gaq || [];
+			  _gaq.push(['_setAccount', 'UA-10627564-5']);
+			  _gaq.push(['_trackPageview']);
+			  (function() {
+				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+			  })();
+		</script>
+	</div>
+<script language="javascript" type="text/javascript" src="http://js.users.51.la/3491149.js"></script>
+<noscript><a href="http://www.51.la/?3491149" target="_blank"><img alt="&#x6211;&#x8981;&#x5566;&#x514D;&#x8D39;&#x7EDF;&#x8BA1;" src="http://img.users.51.la/3491149.asp" style="border:none" /></a></noscript>
+	<BODY>
+</HTML>

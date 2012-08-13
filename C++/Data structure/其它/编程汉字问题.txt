@@ -1,0 +1,55 @@
+/* 本程序为Windows下的控制台程序，需MFC的支持（否则不能通过编译） 
+* 执行时带一个参数，指定要打开的文件；以每行10个字符（每个中文字符算一个字符）， 
+* 最后一行可能不足10个。另外如'\n','\t'等字符可能改变打印格式。 
+*/ 
+
+#include <iostream.h> 
+#include <afx.h> 
+
+int main(int argc, char* argv[]) 
+{ 
+ if (argc != 2) 
+ { 
+   cout << 2 << endl; 
+   return 1; 
+ } 
+
+ CFile file; 
+ int sucess = file.Open(argv[1], CFile::modeRead); 
+ if (!sucess) 
+ { 
+   cout << 2 << endl; 
+   return 2; 
+ } 
+
+ long length = file.GetLength(); 
+
+ bool flag = false;         // 指针是否指在汉字的高位字节 
+ int count = 0; 
+ unsigned char buf[21], *p = buf; 
+ for (int i=0; i<length; i++) 
+ { 
+   if (count == 10) 
+   { 
+     *p = '\0'; 
+     cout << buf << endl;   // 注意：控制符可能打乱显示格式 
+
+     count = 0; 
+     p = buf; 
+   } 
+
+   file.Read(p, 1); 
+   count++; 
+   if (*p++ > 128 && !flag) 
+   { 
+     count--; 
+     flag = true; 
+   } 
+   else 
+     flag = false; 
+ } 
+ *p = '\0'; 
+ cout << buf << endl; 
+
+ return 0; 
+}

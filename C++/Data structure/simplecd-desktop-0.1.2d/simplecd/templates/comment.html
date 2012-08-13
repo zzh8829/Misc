@@ -1,0 +1,36 @@
+$def with (rtn)
+
+$code
+    cmts = rtn[0]
+    id = rtn[1]
+    page = int(rtn[2])
+    num = len(cmts)
+    split = 10
+    isprev = page != 1
+    prev = page-1
+    isnext = (num-1)/split+1 > page
+    next = page+1
+    offset = min(num-(page-1)*split,split)
+    start = (page-1)*split
+    if page == 0:
+        start = 0
+        offset = num
+
+<div id=comments align=center width=800>
+	<table align=center width=800 border=0>
+		<td><tr><hr align=left width=480 style="border:1px dotted #CCC;"></td></tr>
+	$for i in range(start,start+offset):
+		<tr><td width=480><a href="/user/$:cmts[i].username">$:cmts[i].username</a> ( $cmts[i].time ) 留言道:<br>
+		$:cmts[i].comment<br>
+		<hr align=left width=480 style="border:1px dotted #CCC;"></td></tr>
+
+	<tr><td>
+    $if isprev:
+		<a href="javascript:showcmt('$id','$prev')">上一页</a>
+    $if isnext:
+        <a href="javascript:showcmt('$id','$next')">下一页</a>
+	<a href="javascript:showcmt('$id','0')">全部留言</a>
+	</td></tr>
+
+	</table>
+</div>
