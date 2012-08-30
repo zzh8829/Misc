@@ -1,8 +1,8 @@
 #include <cstdio>
 #include <ctime>
 #include <cmath>
-const int maxp = 100000001; // 总数量 自己随便改... 
-const int sp = (int)sqrt(maxp)+1;
+const int maxp = 1000001; // 总数量 自己随便改... 
+const int sp = 1000;
 int P[sp],pn;
 bool p[maxp];
 bool prime(int n)
@@ -25,11 +25,11 @@ int main()
 	for(int i=0;i!=pn;i++)
 		for(int j=2;j*P[i]<maxp;j++)
 			p[j*P[i]]=true;	 
-	/*  输出数字 忽略... 
+	//  输出数字 忽略... 
 	for(int i=2;i!=maxp;i++)
 		if(!p[i])
 			printf("%d ",i);
-	*/	
+		
 	// 输出计时 
 	printf("Done\n%0.4f\n", (float)(clock()-t1)/CLOCKS_PER_SEC );
 	getchar();
