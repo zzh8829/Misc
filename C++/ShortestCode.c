@@ -1,0 +1,10 @@
+main(n,a,b,c)
+{
+	if(scanf("%d",&n))
+	while
+	(
+		scanf("%d%c%d",&a,&c,&b),
+		printf("%d\n",c&1?c&2?a+b:a-b:a*b),
+		--n
+	){}
+}
