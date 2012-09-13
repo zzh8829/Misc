@@ -1,42 +1,37 @@
 #include <iostream>
 #include <cmath>
 using namespace std;
-
-int side[6] = {0,1,2,3,4};
-int height[6]={0,1,2,1,0};
-
+int height[6]={-1,0,1,0,-1};
 bool inside(int m,int a,int b)
 {
-	float mag = pow(5.0,m);
-	float am = a/m;
-	if( b/m < 0.5 || am <0.2 || am>0.8)
+	if(m==1)
+	{
+		if( b<=height[a] )
+			return true;
+		else
+			return false;
+	}
+	float side = pow(5.0,m);
+	float as = a/side;
+	float bs =b/side;	
+	/*
+	if(m==2)
+	cout << as << " " << bs <<endl;
+	*/	
+	if( as < 0.2 || as > 0.8 ||	bs > 0.6)
 		return false;
-	
-	float l,m,r;
-	l = 1.0/5;
-	m = 2.0/5;
-	r = 3.0/5;
-	rr = 4.0/5;
-	int hm = mag/5;
-	
-	if( am > l && am < m)
+	if( (as>=0.2 && as <0.4) ||
+			(as>0.6 && as <=0.8) )
 	{
-		if height[1]*hm
+		if( bs <= 0.2) 
+			return true;
+		if( bs > 0.4)
+			return false;
 	}
-	else if(am > m && am < r)
-	{
-	}
-	else if(am ? r && am < rr)
-	{
-	}
-	
-	int h ;
-	while( mag != 5 )
-	{
-	float l = a/mag;
-		
-
-
+	if( as >=0.4 && as <=0.6 && bs <=0.4)
+		return true; 
+	int ma = side/5;
+	return inside(m-1,a%ma,b%ma);
 }
 
 int main()
@@ -45,16 +40,13 @@ int main()
 	cin >> n;
 	for(int i=0;i!=n;i++)
 	{
-		int m;
-		cin >> m;
-		int a,b;
-		cin >> a >>b;
-		if(inside(m,a,b) )
+		int m,a,b;
+		cin >> m >> a >>b;
+		if( inside(m,a,b) )
 		cout << "crystal" <<endl;
 		else 
 		cout << "empty" <<endl;
 	}
-	
 	system("pause");
 	return 0;
 }

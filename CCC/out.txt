@@ -1,0 +1,12 @@
+Win in 1 knight move(s).
+Stalemate in 1 knight move(s).
+Loss in 2 knight move(s).
+Loss in 1 knight move(s).
+Loss in 38 knight move(s).
+Win in 49 knight move(s).
+Stalemate in 49 knight move(s).
+Stalemate in 0 knight move(s).
+Stalemate in 1 knight move(s).
+Win in 6 knight move(s).
+Press any key to continue . . . 
+Win in 3 knight move(s).
