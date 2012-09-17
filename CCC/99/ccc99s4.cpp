@@ -21,8 +21,6 @@ struct P{
 
 int main()
 {
-	freopen("out.txt","w",stdout);
-	freopen("in.txt","r",stdin);
 	cin >> n;
 	while(n--)
 	{
@@ -60,7 +58,7 @@ int main()
 		int min=1000;
 		for(int i=1;i<r-pr;i++)
 		{
-			if( s[i+pr][pc]>0 && i >= s[i+pr][pc] && (i - s[i+pr][pc] )%2==0)
+			if( s[i+pr][pc]>=0 && i >= s[i+pr][pc] && (i - s[i+pr][pc] )%2==0)
 			{
 				win = 1;
 				min = i;
@@ -74,26 +72,14 @@ int main()
 			{
 				if(s[i+pr+1][pc]!=-1 && i>= s[i+pr+1][pc]&& (i - s[i+pr+1][pc])%2==0)
 				{
-					if( s[i+pr+1][pc] < min)
-					{
-						sta = 1;
-						min = s[i+pr+1][pc];
-					}
+					sta = 1;
+					min = i;
+					break;
 				}
 			}
 			if(sta) printf("Stalemate in %d knight move(s).\n",min);
 			else printf("Loss in %d knight move(s).\n",r-pr-1);
 		}
-		/*
-		for(int i=1;i<=r;i++)
-		{
-			for(int j=1;j<=c;j++)
-			{
-				cout << s[i][j] << " ";
-			}
-			cout << endl;
-		}
-		*/
 	}
 	system("pause");
 	return 0;

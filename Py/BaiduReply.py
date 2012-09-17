@@ -1,21 +1,25 @@
 #! /usr/bin/env python
 #-*- coding:utf-8 -*-
 
+global contents,huitie,tiebaList,accList
+
 # accounts
 accList = [
-    {"username":'','password':''}
+    {"username":'xxx','password':'xxx'}
     #,{"username":'xxx','password':'xxx'}
     ]
 # tiebas
 tiebaList = [
-    '贴吧测试'#,'C语言','java','李毅','魔兽世界','python','noip','qt'
+    'c++','C语言'
     ]
 
-global contents
-
+# 回帖内容 从这里面随机挑选
 contents = [
-    '从没见过比 这个更标准 的十五字了','汗...','哦哦哦 拿经验走人啦~~'
+    '酱油路过.....','汗...','糖果神术之 ———— 碗'
     ]
+
+# 回帖的编号 2是第3贴 5是第6贴 (为了跳过顶置) 以此类推 (可以随便选 不用1，2，3，4是为了怕被看出来- -!)
+huitie = [2,5,7]
 
 import urllib
 import urllib2
@@ -127,7 +131,9 @@ class Tieba:
 
     def getTopics(self):
         page = self.openUrl(self.tb_url)
-        tids = re.findall('<a href="/p/(\d+)" target="_blank" class="\w+">.+</a>',page)
+        print page
+        tids = re.findall('<a href="/p/(\d+)"',page)
+        print tids
         return tids[2:]
 
     def enter(self,tb_kw,tb_url):
@@ -154,11 +160,6 @@ class Tieba:
 
             
 if __name__ == '__main__':
-    try:
-        from accList import accList
-        from tiebaList import tiebaList
-    except:
-        pass
     Log = LogMaker()
     for acc in accList:
         user = Tieba(acc['username'],acc['password'])
@@ -167,6 +168,9 @@ if __name__ == '__main__':
             for tieba in tiebaList:
                 url = urllib.urlencode({'kw':tieba.decode('u8').encode('gb2312'),})
                 user.enter(tieba,url)
-                user.reply(user.getTopics()[0:5])
+                top = user.getTopics()
+                print top
+                for i in huitie:
+                    user.reply(top[i])
 
     print ('Reply Finished')

@@ -7,7 +7,7 @@ using namespace std;
 
 int n;
 int finish;
-bool check[7777780];
+bool check[88888889];
 
 typedef vector< vector<int> > Pos;
 
@@ -132,9 +132,9 @@ int main()
 {
 	while(cin >> n && n!=0)
 	{
-		for(int i=0;i!=7777779;i++)
+		for(int i=0;i!=88888889;i++)
 		check[i] = false;
-		float ok = 0.1234567;
+		float ok = 0.12345678;
 		finish = (pow(10.0,n))*ok;
 		Pos pos;
 		vector<int> init;
