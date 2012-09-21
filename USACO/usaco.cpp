@@ -7,13 +7,13 @@ LANG: C++
 #include <fstream>
 
 using namespace std;
-//ifstream cin(".in");
-//ofstream cout(".out");
+
 
 
 int main()
 {
+//ifstream cin(".in");
+//ofstream cout(".out");
 
-	system("pause");
 	return 0;
 }

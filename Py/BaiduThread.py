@@ -8,14 +8,14 @@ accList = [
     ]
 # tiebas
 tiebaList = [
-    '贴吧测试'#,'C语言','java','李毅','魔兽世界','python','noip','qt'
+    '发帖实验'#,'C语言','java','李毅','魔兽世界','python','noip','qt'
     ]
 
 global threads
 
 threads = [
-    {'title':'自动主题','content':'回复内容'},
-    {'title':'自动主题2','content':'回复内容2'}
+    {'title':'此贴由zzh8829通过发帖器发送','content':'此贴由zzh8829通过发帖器发送'},
+    {'title':'此贴由zzh8829通过发帖器发送','content':'此贴由zzh8829通过发帖器发送'}
     ]
 
 import urllib
@@ -159,16 +159,17 @@ if __name__ == '__main__':
     except:
         pass
     Log = LogMaker()
-    for acc in accList:
-        user = Tieba(acc['username'],acc['password'])
-        if user.login():
-            Log.makeLog('%s Login Success'%user.username)
-            for tieba in tiebaList:
-                url = urllib.urlencode({'kw':tieba.decode('u8').encode('gb2312'),})
-                user.enter(tieba,url)
-                
-                for thread in threads :
-                    time.sleep(1)
-                    user.postThread( thread['title'], thread['content'])
+    nm = raw_input("Enter name")
+    ps = raw_input("Enter pass")
+    user = Tieba(nm,ps)
+    if user.login():
+        Log.makeLog('%s Login Success'%user.username)
+        for tieba in tiebaList:
+            url = urllib.urlencode({'kw':tieba.decode('u8').encode('gb2312'),})
+            user.enter(tieba,url)
+            
+            for thread in threads :
+                time.sleep(5)
+                user.postThread( thread['title'], thread['content'])
 
     print ('Post Finished')

@@ -10,12 +10,12 @@ accList = [
     ]
 # tiebas
 tiebaList = [
-    'c++','C语言'
+    '易语言'
     ]
 
 # 回帖内容 从这里面随机挑选
 contents = [
-    '酱油路过.....','汗...','糖果神术之 ———— 碗'
+    '本内容由回帖脚本发送'
     ]
 
 # 回帖的编号 2是第3贴 5是第6贴 (为了跳过顶置) 以此类推 (可以随便选 不用1，2，3，4是为了怕被看出来- -!)
@@ -123,7 +123,7 @@ class Tieba:
         reply_url="http://tieba.baidu.com/f/commit/post/add"
         data = {
             'kw':self.kw,'ie':'utf-8','rich_text':'1',
-            'anonymous':'0','content':self.getContent(),
+            'anonymous':'0','content':"此贴由脚本发送",
             'fid':self.fid,'tid':tid
             }
         data['tbs'] = self.getTbs(tid)
@@ -131,9 +131,9 @@ class Tieba:
 
     def getTopics(self):
         page = self.openUrl(self.tb_url)
-        print page
+        #print page
         tids = re.findall('<a href="/p/(\d+)"',page)
-        print tids
+        #print tids
         return tids[2:]
 
     def enter(self,tb_kw,tb_url):
@@ -161,16 +161,19 @@ class Tieba:
             
 if __name__ == '__main__':
     Log = LogMaker()
-    for acc in accList:
-        user = Tieba(acc['username'],acc['password'])
-        if user.login():
-            Log.makeLog('%s Login Success'%user.username)
-            for tieba in tiebaList:
-                url = urllib.urlencode({'kw':tieba.decode('u8').encode('gb2312'),})
-                user.enter(tieba,url)
-                top = user.getTopics()
-                print top
-                for i in huitie:
-                    user.reply(top[i])
+
+    nm = raw_input("Enter name\n")
+    ps = raw_input("Enter Pass\n")
+    user = Tieba(nm,ps)
+    if user.login():
+        Log.makeLog('%s Login Success'%user.username)
+        for tieba in tiebaList:
+            url = urllib.urlencode({'kw':tieba.decode('u8').encode('gb2312'),})
+            user.enter(tieba,url)
+            #top = user.getTopics()
+            #print top
+            #for i in huitie:
+                #user.reply(top[i])
+            user.reply("1869412685")
 
     print ('Reply Finished')
