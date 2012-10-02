@@ -1,3 +1,4 @@
+#define <!--more Read Source Code-->
 /*
 ID: zzh8829
 PROG: 
@@ -8,12 +9,12 @@ LANG: C++
 
 using namespace std;
 
-
-
 int main()
 {
-//ifstream cin(".in");
-//ofstream cout(".out");
+#ifndef LOCAL
+	ifstream cin(".in");
+	ofstream cout(".out");
+#endif
 
 	return 0;
 }
