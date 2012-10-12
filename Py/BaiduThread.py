@@ -8,15 +8,13 @@ accList = [
     ]
 # tiebas
 tiebaList = [
-    '发帖实验'#,'C语言','java','李毅','魔兽世界','python','noip','qt'
+    'zzh8829'#,'C语言','java','李毅','魔兽世界','python','noip','qt'
     ]
 
 global threads
 
 threads = [
-    {'title':'此贴由zzh8829通过发帖器发送','content':'此贴由zzh8829通过发帖器发送'},
-    {'title':'此贴由zzh8829通过发帖器发送','content':'此贴由zzh8829通过发帖器发送'}
-    ]
+    {'title':'Daily Post','content':'每日一贴，永不间断'}]
 
 import urllib
 import urllib2

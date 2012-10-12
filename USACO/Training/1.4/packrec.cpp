@@ -5,103 +5,75 @@ LANG: C++
 */
 #include <iostream>
 #include <fstream>
-
 using namespace std;
-int in[5][3];
-int area=99999;
-bool ans[9999][50][50]={false},Min[9999]={false};
-int max(int a,int b)
+int total,MIN=32767,a[5][3],answer[100][3];
+void pack(int x,int y)
 {
-	if( a>=b)
-	return a;
-	return b;
-}
-
-void cal(int width,int height)
-{
-	int mj=width*height;
-	if(mj<=area)
+	if (x*y>MIN) return;
+	if (x*y<MIN)
 	{
-        cout << mj <<endl;
-		area=mj;
-		Min[mj]=true;
-		if(width>height)
-		ans[mj][height][width]=true;
-		else
-		ans[mj][width][height]=true;
+		MIN=x*y;
+		total=0;
 	}
+	if (x>y) swap(x,y);
+	for (int i=1;i<=total;i++)
+		if (x==answer[i][1] && y==answer[i][2])
+			return;
+	answer[++total][1]=x; answer[total][2]=y;
 }
-void iter(int a1,int a2,int a3,int a4,int t1,int t2,int t3,int t4 )
-{
-	int a,b,area,w1=in[a1][t1],w2=in[a2][t2],w3=in[a3][t3],w4=in[a4][t4];
-	int h1=in[a1][1-t1],h2=in[a2][1-t2],h3=in[a3][t1-3],h4=in[a4][1-t4];
-	
-	a=max(((w1,w2),w3),w4);
-	b=(h1+h2+h3+h4);
-	cal(a,b);
-	
-	a=max((w1,w2),w3)+h4;
-	b=max((h1+h2+h3),w4);
-	cal(a,b);
-	
-	a= max((w1+w2+w3),(w4+w3));
-	b=max(h3,(h4+max(h1,h2)));
-	cal(a,b);
-	
-	a= (w1+w2+max(w3,w4));
-	b= max(max(h1,h2),h3+h4);
-	cal(a,b);
-	
-	b=max(h1+h3,h2+h4);
-	if (h3>=h2+h4)
-	a=max(w1,w3+max(w2,w4));
-	if (h3>h4&&h3<h2+h4)
-	a=max(w1+w2,w3+max(w2,w4));
-	if (h3<h4&&h4<h1+h3)
-	a=max(w1+w2,w4+max(w1,w3));
-	if (h4>=h1+h3)
-	a=max(w2,w4+max(w1,w3));
-	if (h3==h4)
-	a=max(w1+w2,w3+w4);
-	cal(a,b);
-}
-
-
 
 int main()
 {
-	//ifstream cin("packrec.in");
-	//ofstream cout("packrec.out");
-	int N,M;
-	for(int i=0;i!=4;i++)
+	ifstream cin("packrec.in");
+	ofstream cout("packrec.out");
+	for (int i=1;i<5;i++)
+		cin >> a[i][1] >> a[i][2];
+	for (int a1=1;a1<5;a1++)
+	for (int a2=1;a2<5;a2++) if (a1!=a2)
+	for (int a3=1;a3<5;a3++) if (a3!=a2&&a3!=a1)
 	{
-		cin >> N >> M;
-		in[i][0]=N;
-		in[i][1]=M;
+		int a4=10-a1-a2-a3;
+		for (int b1=1;b1<3;b1++)
+		for (int b2=1;b2<3;b2++)
+		for (int b3=1;b3<3;b3++)
+		for (int b4=1;b4<3;b4++)
+		{
+			int h1=a[a1][b1],h2=a[a2][b2],h3=a[a3][b3],h4=a[a4][b4];
+			int w1=a[a1][3-b1],w2=a[a2][3-b2],w3=a[a3][3-b3],w4=a[a4][3-b4];
+			
+			int width=w1+w2+w3+w4,height=max(max(max(h1,h2),h3),h4);
+			pack(width,height);
+		
+			width=max(w1+w2+w3,w4);
+			height=max(max(h1,h2),h3)+h4;
+			pack(width,height);
+		
+			width=max(w1+w2,w3)+w4;
+			height=max(max(h1,h2)+h3,h4);
+			pack(width,height);
+		
+			width=w1+w2+max(w3,w4);
+			height=max(max(h1,h2),h3+h4);
+			pack(width,height);
+		
+			height=max(h1+h3,h2+h4);
+			if (h3>=h2+h4) width=max(w1,w3+max(w2,w4));
+			if (h3>h4&&h3<h2+h4) width=max(w1+w2,w3+max(w2,w4));
+			if (h3<h4&&h4<h1+h3) width=max(w1+w2,w4+max(w1,w3));
+			if (h4>=h1+h3) width=max(w2,w4+max(w1,w3));
+			if (h3==h4)	width=max(w1+w2,w3+w4);
+			pack(width,height);
+		}
 	}
-	for(int a=0;a!=4;a++)
-	for(int b=0;b!=4;b++)
-	if(a!=b)
-	for(int c=0;c=4;c++)
-	if(c!=a&&c!=b)
+	for (int i=1;i<total;i++)
+	for (int j=i+1;j<=total;j++)
+	if (answer[i][1]>answer[j][1])
 	{
-		int d=6-a-b-c;
-		for(int e=0;e!=2;e++)
-		for(int f=0;f!=2;f++)
-		for(int g=0;g!=2;g++)
-		for(int h=0;h!=2;h++)
-		iter(a,b,c,d,e,f,g,h);
+		swap(answer[i][1],answer[j][1]);
+		swap(answer[i][2],answer[j][2]);
 	}
-	cout << area <<endl;
-	bool f=true;
-	for(int i=0;i!=9999&&f!=false;i++)
-	if(Min[i]==true)
-	{
-		for(int j=0;j!=51;j++)
-		for(int k=0;k!=51;k++)
-		if(ans[i][j][k]==true)
-		cout << j<<" "<< k <<endl;
-	}
-	system("pause");
+	cout << MIN << endl;
+	for (int i=1;i<=total;i++)
+		cout << answer[i][1] <<" " <<answer[i][2] << endl;
 	return 0;
 }

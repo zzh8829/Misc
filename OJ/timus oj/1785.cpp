@@ -15,6 +15,5 @@ int main()
     if ( x>=  250  && x<= 499 )cout<< "swarm"<<endl;
     if ( x>=  500  && x<= 999 )cout<< "zounds"<<endl;
     if ( x>=  1000            )cout<< "legion"<<endl;
-    system("pause");
     return 0;
 }

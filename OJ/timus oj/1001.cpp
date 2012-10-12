@@ -1,30 +1,32 @@
 #include <iostream>
 #include <cmath>
-#include <ctime>
+#include <cstdio>
 using namespace std;
+
+double ans[1000000];
+double error = 1e-4;
+double SQRT(long long a)
+{
+	if(a==0) return 0;
+	long double x =a;
+	long double t;
+	while(1)
+	{
+		t = a/x;
+		if((x>t?x-t:t-x) < error) break;
+		x = (x+t)/2;
+	}
+	return x;
+}
 int main()
 {
-	float input[65537]={0.0};
-	int id=0;
-	float in=0.0;
-	int t = clock();
-	int t2 = 0;
+	long long in;
+	int n = 0;
 	while(cin>>in)
 	{
-		input[id]=in;
-		id++;
-		t2=clock();
-		if (t2-t > 1000)
-		break;
+		ans[n++] = SQRT(in);
 	}
-	int idd=id;
-	while(id>-1)
-	{
-		input[id]=sqrt(input[id]);
-		id--;
-	}
-	for(int i=idd-1;i!=-1;i--)
-		cout<<input[i] <<endl;
-	system("pause");
+	for(int i=n-1;i>=0;i--)
+		printf("%.4f\n",ans[i]);
 	return 0;
 }
