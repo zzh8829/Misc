@@ -42,13 +42,11 @@ int main ( int argc, char *argv[] )
 		}
         r=m[0][0];
         go(0,0,0);
-        
         if(o[n-1][n-1]!=1<<18)
         cout << o[n-1][n-1] <<endl;
         else
         cout << "CANNOT MAKE THE TRIP" <<endl;
         cout <<endl;
     }
-    system("pause");
     return 0;
 }

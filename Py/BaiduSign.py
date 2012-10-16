@@ -3,13 +3,14 @@
 
 # accounts
 accList = [
-    {"username":'','password':''}
+    {"username":'xxx','password':'xxx'}
     #,{"username":'xxx','password':'xxx'}
     ]
 # tiebas
 tiebaList = [
-    'C++','C语言','java','李毅','魔兽世界','python','noip','qt'
+    'C++','C语言','java'
     ]
+	
 import urllib
 import urllib2
 import cookielib
@@ -25,6 +26,9 @@ class LogMaker:
         def decode(self,s):
             try:
                 return s.decode('utf8')
+            except: pass
+            try:
+                return s.encode('gbk')
             except:
                 return s
     else:
@@ -39,9 +43,12 @@ class LogMaker:
 
     def makeLog(self,*args):
         for item in args:
-            print(self.decode(item))
-            self.logFile.write(item)
-            self.logFile.write("\n")
+            try:
+                de = self.decode(item)
+                print(de)
+                self.logFile.write(de)
+                self.logFile.write("\n")
+            except:pass
 
 class Tieba:
     def __init__(self,username,password):
@@ -51,6 +58,27 @@ class Tieba:
         self.opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
         self.opener.addheaders = [('User-agent', 'Mozilla/5.0 (X11; Linux i686)')]
         urllib2.install_opener(self.opener)
+        self.login()
+
+    def login(self):
+        def post():
+            url = 'https://passport.baidu.com/v2/api/?login'
+            page = self.openUrl(url,data)
+
+        data={"username":self.username.decode("utf8").encode("gbk"),"password":self.password,"verifycode":'',
+            "mem_pass":"on","charset":"GBK","isPhone":"false","index":"0",
+            "safeflg":"0","staticpage":"http://tieba.baidu.com/tb/v2Jump.html",
+              "loginType":"1","tpl":"tb","codestring":'',
+              "callback":"parent.bdPass.api.loginLite._submitCallBack"}
+
+        post()
+        token_url="https://passport.baidu.com/v2/api/?loginliteinfo&username=%s&isPhone=false&tpl=tb&immediatelySubmit=false&index=0&t=1345615911499"%self.username
+        token_page=self.openUrl(token_url)
+        data["token"]=re.findall("token:'(\w+)'" ,token_page)[0]
+        post()
+
+        return True
+    
     def openUrl(self,*args):
         try:
             if len(args)==1:
@@ -68,6 +96,8 @@ class Tieba:
                 else:
                     args[1]['tbs']=self.getTbs()
             self.openUrl(*args)
+        except urllib2.URLError:
+            print("WTF??")
 
     def sign(self):
         sign_url="http://tieba.baidu.com/sign/add"
@@ -83,59 +113,35 @@ class Tieba:
             except:
                 pass
         if not res or res['error']!='':
-            Log.makeLog('Sign Failed (Already signed or System error)')
+            Log.makeLog(res['error'].encode('gbk'))
         else:
-            Log.makeLog('Sign Successed','You are No. %d '%res['data']['finfo']['current_rank_info']['sign_count'])
-                        
-class WapTieba(Tieba):
-    def __init__(self,username,password):
-        Tieba.__init__(self,username,password)
-    def login(self):
-        url = 'http://wappass.baidu.com/passport/'
-        data={
-            'login_username':self.username,
-            'login_loginpass':self.password,
-            'aaa':'登录',
-            'login':'yes',
-            'can_input':'0',
-            'u':'http://wapp.baidu.com/f/q---wiaui_1346040694_8698--1-1-0/m?',
-            'tpl':'wapp',
-            'tn':'bdIndex',
-            'pu':'',
-            'ssid':'000000',
-            'from':'',
-            'bd_page_type':'1',
-            'uid':'wiaui_1346040694_8698',}
-        return self.openUrl(url,data)
+            Log.makeLog('OK: No. %d '%res['data']['finfo']['current_rank_info']['sign_count'])
 
-    #Override
-    def getTiebas(self):
-        page=self.urlopen('http://wapp.baidu.com/m?tn=bdFBW&tab=favorite')
-        return re.findall('<a href="/f/[-_\w]+?/m\?kw=([%\w]+?)">.+?</a>',page)
-        
-    #Override
-    def enter(self,kw):
-        self.kw=urllib.unquote(kw)
-        self.tb_url = 'http://wapp.baidu.com/m?kw=%s'%self.kw
-        Log.makeLog('> Enter Tieba %s'%self.kw)
-
-    #Override
     def getTbs(self,tid=None):
         if tid:
-            fuck = 1
+                page = self.openUrl("http://tieba.baidu.com/p/%s"%tid)
+                Log.makeLog ("http://tieba.baidu.com/p/%s"%tid)
+                tbs=re.findall("'tbs'  : \"(\w+)\"",page)
         else:
             page = self.openUrl(self.tb_url)
-            tbs = re.findall(
-                '<input type="hidden" name="tbs" value="(\w+)"/>',page)
+            tbs=re.findall('<input type="hidden" name="tbs" value="(\w+)"/>',page)
             if tbs==[]:
-                tbs = re.findall('tbs=(\w+)&amp',page);
-                print tbs
-                if  tbs==[]:
-                    Log.makeLog("get Tbs Faild T_T ")
+                tbs = re.findall("PageData.tbs = \"(\w+)\"",page)
+                if tbs ==[]:
+                    Log.makeLog("Get tbs Faild T_T" ) 
                     return None
+                return tbs[0]
         return tbs[0]
 
-            
+    def enter(self,tb_kw,tb_url):
+        if tb_url.startswith('http://'):
+            self.tb_url=tb_url
+            self.kw=tb_kw
+        else:
+            self.kw=urllib.unquote(tb_kw)
+            self.tb_url="http://tieba.baidu.com/f?%s"%tb_url
+        Log.makeLog("> Tieba: "+tb_kw)
+                
 if __name__ == '__main__':
     try:
         from accList import accList
@@ -144,11 +150,10 @@ if __name__ == '__main__':
         pass
     Log = LogMaker()
     for acc in accList:
-        user = WapTieba(acc['username'],acc['password'])
-        if user.login():
-            Log.makeLog('%s Login Success'%user.username)
-            for tieba in tiebaList:
-                user.enter(tieba)
-                user.sign()
+        user = Tieba(acc['username'],acc['password'])
+        Log.makeLog('%s Login Success'%user.username)
+        for tieba in tiebaList:
+            user.enter(tieba,urllib.urlencode({'kw':tieba.decode('u8').encode('gbk')}))
+            user.sign()
 
 print ('Sign Finished')
