@@ -41,7 +41,7 @@ int main()
 				{
 					t= bitset<32>(string(n-p-1,'1')).to_ulong();
 					if(c+t<=i) b+=t-1,c+=t-1;
-					else b+=(i-c)-1,c=i-1;
+					else b+=i-c-1,c=i-1;
 					break;
 				}
 			}	
