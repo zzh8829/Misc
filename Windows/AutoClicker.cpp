@@ -5,8 +5,8 @@ using namespace std;
 
 int main()
 {
-	int x = 400;
-	int y = 300;
+	int x = 500;
+	int y = 500;
 	int slpTime=1;
 	int dx[5]={100,-100,-100,0};
 	int dy[5]={0,0,0,-100};
@@ -17,7 +17,7 @@ int main()
 		for(int i=0;i!=2;i++)
 		{
 			int tx = x+dx[i];
-			int ty = x+dy[i];
+			int ty = y+dy[i];
 			SetCursorPos(tx,ty);
 			mouse_event(MOUSEEVENTF_RIGHTDOWN, tx, ty, 0, 0);
 	   		mouse_event(MOUSEEVENTF_RIGHTUP, tx, ty, 0, 0);

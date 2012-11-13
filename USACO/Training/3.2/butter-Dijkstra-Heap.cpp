@@ -16,7 +16,15 @@ struct E{
 	int node;
 	int weight;
 	E(int n,int w):node(n),weidge(w){}
+	bool operator ()(const E& l,const E& r) const
+	{
+		return l.weidge < r.weidge;
+	}
 };
+
+vector<E> G[]
+
+priority_queue<E,vector<E> > Q;
 
 int main()
 {
